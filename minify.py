@@ -77,10 +77,11 @@ class HTMLHandler:
     """Handle html files for getting icons."""
 
     patern = re.compile(
-        r"<i class=\"fa. +(?:fa-(?:(?:pulse)|(?:rotate-\d+)|(?:fa-flip-\
-        horizontal)|(?:fa-flip-vertical)|(?:spin)|(?:border)|(?:pull-right)\
-        |(?:pull-left)|(?:inverse)|(?:stack-\d+x)|(?:xs)|(?:fw)|(?:sm)|(?:lg)\
-        |(?:\d+x)) )* *fa-(?P<name>.+?)(?: +.+?)*\"><\/i>"
+        r"<i.+?class=\"(?:(?:fa. +)|(?:fa-(?:(?:pulse)|(?:rotate-\d+)" +
+        r"|(?:flip-horizontal)|(?:flip-vertical)|(?:spin)|(?:border)|" +
+        r"(?:pull-right)|(?:pull-left)|(?:inverse)|(?:stack-\d+x)|(?:xs)|" +
+        r"(?:fw)|(?:sm)|(?:lg)|(?:\d+x)) *))* *fa-(?P<name>.+?)(?: +.+?)*" +
+        r"\".*?><\/i>"
     )
 
     def __init__(self, pathes):
