@@ -133,5 +133,84 @@ class TestHTMLHandler(unittest.TestCase):
         )
 
 
+class TestFAHandler(unittest.TestCase):
+    """Class tests FAHandler class."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Create dirs and files for tests."""
+        create_directories()
+        shutil.copyfile('test_data/fa.js', 'test_dir/2/fa.js')
+        shutil.copyfile('test_data/fa_answer.js', 'test_dir/2/fa_answer.js')
+
+    @classmethod
+    def tearDownClass(cls):
+        """Remove dirs and files for tests."""
+        remove_directories()
+
+    def test_get_size(self):
+        """Test get_size."""
+        instance = FAHandler('', {})
+        instance.data = '123456789'
+        self.assertEqual(9, instance.get_size())
+
+    def test_get_minified_size(self):
+        """Test get_minified_size."""
+        instance = FAHandler('', {})
+        instance.handled_data = '123456789'
+        self.assertEqual(9, instance.get_minified_size())
+
+    def test_get_data(self):
+        """Test _get_data."""
+        instance = FAHandler('test_data/f1.html', {})
+        instance._get_data()
+        self.assertEqual(len(instance.data), 245)
+
+    def test_write_result(self):
+        """Test _write_result."""
+        instance = FAHandler('test_data/f1.js', {})
+        instance.handled_data = '123456789'
+        instance._write_result()
+        self.assertTrue(os.path.exists('test_data/f1.min.js'))
+        with open('test_data/f1.min.js') as file_reader:
+            self.assertEqual(9, len(file_reader.read()))
+        os.remove('test_data/f1.min.js')
+
+    def test_handle_icon_text(self):
+        """Test _handle_icon_text."""
+        instance = FAHandler('', {'500px', 'adjust'})
+        current_answer = instance._handle_icon_text(
+            '{ "address-book": [], "address-card": [], adjust: []};'
+        )
+        true_answer = '{"adjust": []};'
+        self.assertEqual(current_answer, true_answer)
+
+    def test_parse(self):
+        """Test _parse."""
+        instance = FAHandler('', {'500px', 'adjust'})
+        with open('test_dir/2/fa.js') as file_reader:
+            instance.data = file_reader.read()
+        instance._parse()
+        self.assertEqual(
+            re.sub(r'[\s\"]+', '', instance.data),
+            re.sub(r'[\s\"]+', '', instance.data)
+        )
+
+    def test_just_do_it(self):
+        """Test just_do_it."""
+        instance = FAHandler(
+            'test_dir/2/fa.js',
+            {'500px', 'adjust'}
+        )
+        instance.just_do_it()
+        with open('test_dir/2/fa_answer.js') as file_reader:
+            true_answer = file_reader.read()
+        true_answer = re.sub(r'[\s\"]+', '', true_answer)
+        with open('test_dir/2/fa.min.js') as file_reader:
+            current_answer = file_reader.read()
+        current_answer = re.sub(r'[\s\"]+', '', current_answer)
+        self.assertEqual(true_answer, current_answer)
+
+
 if __name__ == '__main__':
     unittest.main()
