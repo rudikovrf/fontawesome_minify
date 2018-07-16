@@ -11,7 +11,7 @@ import glob2
 class FAHandler:
     """Handle FontAwesome file for getting icons."""
 
-    patern = re.compile(r"((?<=var f = )|(?<=var f=))\{(.+?)\};")
+    patern = re.compile(r"((?<=var f = )|(?<=var f=))\{(.+?)\};", re.S)
 
     def __init__(self, file, html_icons):
         """Initialize handler."""
@@ -38,6 +38,7 @@ class FAHandler:
     def _handle_icon_text(self, string):
         """Return string with only used icons."""
         string = re.sub(r'(\b[^\"]+):', r'"\1":', string)[:-1]
+        # print(string)
         json_data = json.loads(string)
         json_data = {
             key: json_data[key] for key in json_data
